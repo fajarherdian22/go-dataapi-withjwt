@@ -11,6 +11,7 @@ import (
 
 	"gojwt/service"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v3"
@@ -41,6 +42,8 @@ func main() {
 	dataController := controller.NewDataController(dataService)
 
 	router := gin.New()
+	router.Use(cors.Default())
+	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
 	r := router.Group("/api/")
@@ -52,7 +55,7 @@ func main() {
 		auth.Use(middleware.AuthMiddleware())
 		{
 			auth.GET("/data", dataController.GetDataAll)
-			auth.GET("/data/list", dataController.GetDataAll)
+			auth.GET("/data/list", dataController.GetAllFilter)
 			auth.POST("/data/filter", dataController.GetDataByFilter)
 		}
 

@@ -55,8 +55,7 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, web.WebResponse{
 		Code: http.StatusOK,
 		Data: gin.H{
-			"Token":    tokenString,
-			"Username": u.Username,
+			"Token": tokenString,
 		},
 		Status: true,
 	})

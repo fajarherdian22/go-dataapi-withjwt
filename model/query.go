@@ -5,7 +5,7 @@ id,
 username, 
 password, 
 email 
-from credential where username = %s`
+from credential where username = "%s"`
 
 var Query4G_Level = `
 SELECT DISTINCT 
@@ -52,5 +52,5 @@ Ioh_data_traffic_hourly,
 Ioh_volte_traffic_hourly
 FROM site_4g_kpi_hourly_mycom a 
 WHERE hour >= DATE_SUB(NOW(), INTERVAL 1 DAY)
-AND %s = %s
+AND %s = "%s"
 ORDER BY Hour`

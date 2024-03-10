@@ -7,7 +7,7 @@ import (
 )
 
 var SECRET_KEY = []byte("secretkeys")
-var LOGIN_DURATION = time.Now().Add(time.Minute * 10).Unix()
+var LOGIN_DURATION = time.Now().Add(time.Hour * 24).Unix()
 
 func createToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
