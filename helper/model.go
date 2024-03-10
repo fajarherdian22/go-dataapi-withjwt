@@ -49,3 +49,21 @@ func ToDataResponses(Datas []domain.Data4G) []web.Data4G_Response {
 	}
 	return Data4GResponses
 }
+
+func ToDataFilterResponse(Data domain.FilterData4G) web.FilterData4G_Response {
+	return web.FilterData4G_Response{
+		Rpt_region:        Data.Rpt_region,
+		Rpt_area:          Data.Rpt_area,
+		Vbt_micro_cluster: Data.Vbt_micro_cluster,
+		Kecamatan:         Data.Kecamatan,
+	}
+}
+
+func ToDataFilterResponses(Datas []domain.FilterData4G) []web.FilterData4G_Response {
+	var FilterData4G []web.FilterData4G_Response
+
+	for _, data := range Datas {
+		FilterData4G = append(FilterData4G, ToDataFilterResponse(data))
+	}
+	return FilterData4G
+}

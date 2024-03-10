@@ -45,7 +45,6 @@ func (repository *DataRepositoryImpl) GetAllData(ctx context.Context, tx *sql.Tx
 	defer rows.Close()
 
 	for rows.Next() {
-		// data := domain.Data4G{}
 		datamodel := domain.Data4G{}
 		s := reflect.ValueOf(&datamodel).Elem()
 		numCols := s.NumField()
@@ -54,7 +53,29 @@ func (repository *DataRepositoryImpl) GetAllData(ctx context.Context, tx *sql.Tx
 			field := s.Field(i)
 			columns[i] = field.Addr().Interface()
 		}
-		// err := rows.Scan(&data.Short_name, &data.Hour, &data.Date, &data.Kecamatan, &data.Vbt_micro_cluster, &data.Vbt_sales_area, &data.Rpt_region, &data.Rpt_area, &data.Ioh_active_user_hourly, &data.Ioh_cell_availability_nom_hourly, &data.Ioh_cell_availability_denom_hourly, &data.Ioh_data_traffic_hourly, &data.Ioh_volte_traffic_hourly)
+		err := rows.Scan(columns...)
+		helper.IsError(err)
+		datas = append(datas, datamodel)
+	}
+	return datas
+}
+
+func (repository *DataRepositoryImpl) GetAllFilter(ctx context.Context, tx *sql.Tx) []domain.FilterData4G {
+	var datas []domain.FilterData4G
+	Query := model.Query4G_Level
+	rows, err := tx.QueryContext(ctx, Query)
+	helper.IsError(err)
+	defer rows.Close()
+
+	for rows.Next() {
+		datamodel := domain.FilterData4G{}
+		s := reflect.ValueOf(&datamodel).Elem()
+		numCols := s.NumField()
+		columns := make([]interface{}, numCols)
+		for i := 0; i < numCols; i++ {
+			field := s.Field(i)
+			columns[i] = field.Addr().Interface()
+		}
 		err := rows.Scan(columns...)
 		helper.IsError(err)
 		datas = append(datas, datamodel)

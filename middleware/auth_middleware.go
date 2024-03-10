@@ -19,7 +19,7 @@ func verifyToken(tokenString string) error {
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("Invalid token")
+		return fmt.Errorf("Invalids token")
 	}
 
 	return nil
@@ -49,11 +49,10 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.JSON(http.StatusOK, web.WebResponse{
-			Code:   http.StatusOK,
-			Data:   "Welcome !",
-			Status: true,
-		})
 		c.Next()
 	}
+}
+
+func ProtectedHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "This is a protected resource!"})
 }

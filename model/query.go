@@ -1,5 +1,14 @@
 package model
 
+var Query4G_Level = `
+SELECT DISTINCT 
+a.rpt_region, 
+a.rpt_area, 
+a.vbt_micro_cluster, 
+a.kecamatan
+FROM mycom_report.site_4g_kpi_hourly_mycom a;
+`
+
 var Query4G = `
 SELECT 
 Short_name,

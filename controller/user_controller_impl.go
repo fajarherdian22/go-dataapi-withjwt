@@ -27,6 +27,7 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 	var u domain.User
 	if err := c.BindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
 		return
 	}
 
@@ -49,6 +50,7 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 			Status: false,
 		})
 		return
+
 	}
 	c.JSON(http.StatusOK, web.WebResponse{
 		Code: http.StatusOK,
@@ -58,4 +60,5 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 		},
 		Status: true,
 	})
+	c.Header("Authorization", "Bearer "+tokenString)
 }

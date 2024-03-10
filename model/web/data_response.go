@@ -15,3 +15,10 @@ type Data4G_Response struct {
 	Ioh_data_traffic_hourly            *float64 `json:"ioh_data_traffic_hourly"`
 	Ioh_volte_traffic_hourly           *float64 `json:"ioh_volte_traffic_hourly"`
 }
+
+type FilterData4G_Response struct {
+	Rpt_region        *string `json:"rpt_region"`
+	Rpt_area          *string `json:"rpt_area"`
+	Vbt_micro_cluster *string `json:"vbt_micro_cluster"`
+	Kecamatan         *string `json:"kecamatan"`
+}

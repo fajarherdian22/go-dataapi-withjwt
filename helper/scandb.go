@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func ScanDB(isStruct any) []interface{} {
+func ScanDB(isStruct interface{}) []interface{} {
 	datamodel := isStruct
 	s := reflect.ValueOf(&datamodel).Elem()
 	numCols := s.NumField()

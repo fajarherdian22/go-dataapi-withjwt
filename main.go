@@ -1,21 +1,35 @@
 package main
 
 import (
-	"fmt"
 	"gojwt/app"
 	"gojwt/controller"
+	"gojwt/helper"
 	"gojwt/middleware"
+	"gojwt/model"
 	"gojwt/repository"
+	"os"
 
 	"gojwt/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gopkg.in/yaml.v3"
 )
 
 func main() {
-	db_credential := app.CredentialDB()
-	db_data := app.DataDB()
+	configdb, err := os.ReadFile("configs.yaml")
+	helper.IsError(err)
+
+	var config model.Config
+
+	err = yaml.Unmarshal(configdb, &config)
+	helper.IsError(err)
+
+	config_credent := config.Databases["db_credential"]
+	config_data := config.Databases["db_data"]
+
+	db_credential := app.ConDB(config_credent)
+	db_data := app.ConDB(config_data)
 	validate := validator.New()
 	authRepository := repository.NewAuthRepository()
 	authService := service.NewAuthService(authRepository, db_credential, validate)
@@ -27,16 +41,22 @@ func main() {
 
 	router := gin.New()
 	router.Use(gin.Recovery())
-	// router.Use(middleware.AuthMiddleware())
 
-	router.POST("/login", authController.ValidateUser)
-	router.GET("/authenticate", middleware.AuthMiddleware())
+	r := router.Group("/api/")
 
-	router.GET("/data", dataController.GetDataAll)
-	router.POST("/datafilter", dataController.GetDataByFilter)
+	{
+		r.POST("/login", authController.ValidateUser)
+
+		auth := r.Group("/")
+		auth.Use(middleware.AuthMiddleware())
+		{
+			auth.GET("/authenticated", middleware.ProtectedHandler)
+			auth.GET("/data", dataController.GetDataAll)
+			auth.GET("/data/list", dataController.GetDataAll)
+			auth.POST("/data/filter", dataController.GetDataByFilter)
+		}
+
+	}
 
 	router.Run(":8000")
-
-	fmt.Println("Server is running")
-
 }

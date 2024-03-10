@@ -13,6 +13,7 @@ import (
 type DataController interface {
 	GetDataByFilter(c *gin.Context)
 	GetDataAll(c *gin.Context)
+	GetAllFilter(c *gin.Context)
 }
 
 type DataControllerImpl struct {
@@ -44,6 +45,17 @@ func (controller *DataControllerImpl) GetDataByFilter(c *gin.Context) {
 
 func (controller *DataControllerImpl) GetDataAll(c *gin.Context) {
 	dataResponse := controller.DataService.GetAllData(c.Request.Context())
+	WebResponse := web.WebResponse{
+		Code:   200,
+		Data:   dataResponse,
+		Status: true,
+	}
+
+	helper.HandleEncodeWriteJson(c, WebResponse)
+}
+
+func (controller *DataControllerImpl) GetAllFilter(c *gin.Context) {
+	dataResponse := controller.DataService.GetAllFilter(c.Request.Context())
 	WebResponse := web.WebResponse{
 		Code:   200,
 		Data:   dataResponse,

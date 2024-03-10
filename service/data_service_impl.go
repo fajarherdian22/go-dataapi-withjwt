@@ -44,3 +44,13 @@ func (service *DataServiceImpl) GetAllData(ctx context.Context) []web.Data4G_Res
 
 	return helper.ToDataResponses(data)
 }
+
+func (service *DataServiceImpl) GetAllFilter(ctx context.Context) []web.FilterData4G_Response {
+	tx, err := service.DB.Begin()
+	helper.IsError(err)
+	defer helper.CommitOrRollback(tx)
+
+	data := service.DataRepository.GetAllFilter(ctx, tx)
+
+	return helper.ToDataFilterResponses(data)
+}

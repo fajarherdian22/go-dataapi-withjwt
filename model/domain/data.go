@@ -1,5 +1,12 @@
 package domain
 
+type FilterData4G struct {
+	Rpt_region        *string
+	Rpt_area          *string
+	Vbt_micro_cluster *string
+	Kecamatan         *string
+}
+
 type Data4G struct {
 	Short_name                         *string
 	Hour                               *string
