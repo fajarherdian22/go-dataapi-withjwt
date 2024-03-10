@@ -52,7 +52,3 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-func ProtectedHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "This is a protected resource!"})
-}

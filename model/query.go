@@ -1,5 +1,12 @@
 package model
 
+var QueryGetUser = `SELECT 
+id, 
+username, 
+password, 
+email 
+from credential where username = %s`
+
 var Query4G_Level = `
 SELECT DISTINCT 
 a.rpt_region, 

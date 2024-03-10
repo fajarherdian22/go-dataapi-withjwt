@@ -17,10 +17,9 @@ import (
 )
 
 func main() {
+	var config model.Config
 	configdb, err := os.ReadFile("configs.yaml")
 	helper.IsError(err)
-
-	var config model.Config
 
 	err = yaml.Unmarshal(configdb, &config)
 	helper.IsError(err)
@@ -30,7 +29,9 @@ func main() {
 
 	db_credential := app.ConDB(config_credent)
 	db_data := app.ConDB(config_data)
+
 	validate := validator.New()
+
 	authRepository := repository.NewAuthRepository()
 	authService := service.NewAuthService(authRepository, db_credential, validate)
 	authController := controller.NewUserController(authService)
@@ -50,7 +51,6 @@ func main() {
 		auth := r.Group("/")
 		auth.Use(middleware.AuthMiddleware())
 		{
-			auth.GET("/authenticated", middleware.ProtectedHandler)
 			auth.GET("/data", dataController.GetDataAll)
 			auth.GET("/data/list", dataController.GetDataAll)
 			auth.POST("/data/filter", dataController.GetDataByFilter)
