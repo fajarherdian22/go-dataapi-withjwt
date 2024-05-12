@@ -57,7 +57,10 @@ func main() {
 			auth.GET("/data", dataController.GetDataAll)
 			auth.GET("/data/list", dataController.GetAllFilter)
 			auth.POST("/data/filter", dataController.GetDataByFilter)
+			auth.GET("/alluser", authController.GetAllUser)
 		}
+
+		r.POST("/signup", authController.CreateUser)
 
 	}
 

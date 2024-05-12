@@ -1,11 +1,12 @@
 package model
 
-var QueryGetUser = `SELECT 
-id, 
-username, 
-password, 
-email 
-from credential where username = "%s"`
+var QueryGetAllUser = `SELECT * FROM credential`
+
+var QueryGetUser = `SELECT * from credential where username = "%s"`
+
+var QueryCreateUser = `
+INSERT INTO credential (username, password, email, auths) 
+VALUES("%s", "%s", "%s", "user")`
 
 var Query4G_Level = `
 SELECT DISTINCT 

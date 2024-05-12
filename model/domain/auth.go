@@ -5,4 +5,11 @@ type User struct {
 	Username string
 	Password string
 	Email    string
+	Auths    string
+}
+
+type CreateUser struct {
+	Username string
+	Password string
+	Email    string
 }

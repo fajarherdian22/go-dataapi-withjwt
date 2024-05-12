@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gojwt/helper"
 	"gojwt/model/domain"
 	"gojwt/model/web"
 	"gojwt/service"
@@ -11,6 +12,8 @@ import (
 
 type UserController interface {
 	ValidateUser(c *gin.Context)
+	GetAllUser(c *gin.Context)
+	CreateUser(c *gin.Context)
 }
 
 type UserControllerImpl struct {
@@ -25,6 +28,7 @@ func NewUserController(authService service.AuthService) UserController {
 
 func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 	var u domain.User
+
 	if err := c.BindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		c.Abort()
@@ -42,7 +46,7 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 		return
 	}
 
-	tokenString, err := createToken(u.Username)
+	tokenString, err := createToken(u.Username, userResponse.Auths)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, web.WebResponse{
 			Code:   http.StatusInternalServerError,
@@ -52,6 +56,8 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 		return
 
 	}
+
+	c.SetCookie("token", tokenString, 3600, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, web.WebResponse{
 		Code: http.StatusOK,
 		Data: gin.H{
@@ -59,5 +65,50 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 		},
 		Status: true,
 	})
-	c.Header("Authorization", "Bearer "+tokenString)
+
+}
+
+func (controller *UserControllerImpl) GetAllUser(c *gin.Context) {
+	token, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token not found"})
+		return
+	}
+	level, _ := helper.ParseJwt(token)
+	var WebResponse web.WebResponse
+	switch level {
+	case "admin":
+		WebResponse = web.WebResponse{
+			Code:   200,
+			Data:   controller.AuthService.GetAllUser(c.Request.Context()),
+			Status: true,
+		}
+	case "user":
+		WebResponse = web.WebResponse{
+			Code:   http.StatusUnauthorized,
+			Data:   "don't have permission",
+			Status: false,
+		}
+	default:
+		WebResponse = web.WebResponse{
+			Code:   http.StatusUnauthorized,
+			Data:   "Unauthorized",
+			Status: false,
+		}
+	}
+	helper.HandleEncodeWriteJson(c, WebResponse)
+}
+
+func (controller *UserControllerImpl) CreateUser(c *gin.Context) {
+	createUserRequest := web.CreateUser{}
+	helper.HandleDecodeReqJson(c, &createUserRequest)
+
+	createUserResponse := controller.AuthService.CreateUser(c.Request.Context(), createUserRequest)
+	WebResponse := web.WebResponse{
+		Code:   200,
+		Data:   createUserResponse,
+		Status: true,
+	}
+
+	helper.HandleEncodeWriteJson(c, WebResponse)
 }
