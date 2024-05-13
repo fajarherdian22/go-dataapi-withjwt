@@ -9,6 +9,8 @@ import (
 	"gojwt/model"
 	"gojwt/model/domain"
 	"reflect"
+
+	"github.com/google/uuid"
 )
 
 type AuthRepositoryImpl struct {
@@ -59,16 +61,15 @@ func (repository *AuthRepositoryImpl) GetUserByUsername(ctx context.Context, tx 
 }
 
 func (repository *AuthRepositoryImpl) CreateUser(ctx context.Context, tx *sql.Tx, payload domain.User) domain.User {
-	fmt.Println("ini repo")
 	Query := model.QueryCreateUser
-	rows, err := tx.ExecContext(ctx, fmt.Sprintf(Query, payload.Username, payload.Password, payload.Email))
-	fmt.Println(fmt.Sprintf(Query, payload.Username, payload.Password, payload.Email))
+	unique_id := uuid.New()
+	_, err := tx.ExecContext(ctx, fmt.Sprintf(Query, unique_id, payload.Username, payload.Password, payload.Email))
 	helper.IsError(err)
 
-	id, err := rows.LastInsertId()
-	helper.IsError(err)
+	// id, err := rows.LastInsertId()
+	// helper.IsError(err)
 
-	payload.Id = int(id)
+	// payload.Id = int(id)
 	return payload
 
 }

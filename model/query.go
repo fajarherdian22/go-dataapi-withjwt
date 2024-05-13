@@ -5,8 +5,8 @@ var QueryGetAllUser = `SELECT * FROM credential`
 var QueryGetUser = `SELECT * from credential where username = "%s"`
 
 var QueryCreateUser = `
-INSERT INTO credential (username, password, email, auths) 
-VALUES("%s", "%s", "%s", "user")`
+INSERT INTO credential (id, username, password, email, auths) 
+VALUES("%s", "%s", "%s", "%s", "admin")`
 
 var Query4G_Level = `
 SELECT DISTINCT 

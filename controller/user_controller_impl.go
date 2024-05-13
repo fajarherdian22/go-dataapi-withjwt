@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"gojwt/helper"
 	"gojwt/model/domain"
 	"gojwt/model/web"
@@ -36,6 +37,7 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 	}
 
 	userResponse := controller.AuthService.GetUserByUsername(c.Request.Context(), u.Username)
+	fmt.Println(userResponse)
 
 	if userResponse.Password == "" || userResponse.Password != u.Password {
 		c.JSON(http.StatusUnauthorized, web.WebResponse{
