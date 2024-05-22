@@ -8,6 +8,7 @@ import (
 	"gojwt/model"
 	"gojwt/repository"
 	"os"
+	"time"
 
 	"gojwt/service"
 
@@ -42,15 +43,20 @@ func main() {
 	dataController := controller.NewDataController(dataService)
 
 	router := gin.New()
-	router.Use(cors.Default())
-	router.Use(gin.Logger())
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"POST", "GET"},
+		AllowHeaders:    []string{"Content-Type", "Origin", "X-AUTH"},
+		ExposeHeaders:   []string{"Content-Length"},
+		MaxAge:          12 * time.Hour,
+	}))
+	router.Use(middleware.LoggingMiddleware())
 	router.Use(gin.Recovery())
 
 	r := router.Group("/api/")
 
 	{
 		r.POST("/login", authController.ValidateUser)
-
 		auth := r.Group("/")
 		auth.Use(middleware.AuthMiddleware())
 		{

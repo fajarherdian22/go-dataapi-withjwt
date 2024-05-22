@@ -1,0 +1,4 @@
+time="2024-05-22T18:37:13+07:00" level=info at="2024-05-22 18:37:13" ip="[::1]:57446" method=POST payload="map[Password:fajartamvan1 Username:fajarherd22]" uri=/api/login
+time="2024-05-22T18:37:23+07:00" level=info at="2024-05-22 18:37:23" ip="[::1]:57446" method=POST payload="map[Password:fajartamvan1 Username:fajarherd22]" uri=/api/login
+time="2024-05-22T18:37:25+07:00" level=info at="2024-05-22 18:37:25" ip="[::1]:57446" method=POST payload="map[Password:fajartamvan1 Username:fajarherd22]" uri=/api/login
+time="2024-05-22T18:37:26+07:00" level=info at="2024-05-22 18:37:26" ip="[::1]:57446" method=POST payload="map[Password:fajartamvan1 Username:fajarherd22]" uri=/api/login

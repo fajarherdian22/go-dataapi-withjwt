@@ -27,24 +27,28 @@ func verifyToken(tokenString string) (*jwt.Token, error) {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		tokenString, err := c.Cookie("token")
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token not found"})
+		tokenHeader := c.GetHeader("X-AUTH")
+		fmt.Println("this from header", tokenHeader)
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
 			return
 		}
-
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, web.WebResponse{
-				Code:   http.StatusUnauthorized,
-				Data:   "Unauthorized to logins",
-				Status: false,
-			})
-			c.Abort()
-			return
+		fmt.Println("Allowed from CORS")
+		if tokenHeader == "" {
+			tokenCookie, err := c.Cookie("token")
+			if err != nil {
+				c.JSON(http.StatusUnauthorized, web.WebResponse{
+					Code:   http.StatusUnauthorized,
+					Data:   "Unauthorized to logins",
+					Status: false,
+				})
+				c.Abort()
+				return
+			}
+			tokenHeader = tokenCookie
 		}
 
-		token, err := verifyToken(tokenString)
+		token, err := verifyToken(tokenHeader)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, web.WebResponse{
 				Code:   http.StatusUnauthorized,

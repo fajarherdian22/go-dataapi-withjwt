@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"gojwt/helper"
 	"gojwt/model/domain"
 	"gojwt/model/web"
@@ -9,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserController interface {
@@ -28,6 +28,7 @@ func NewUserController(authService service.AuthService) UserController {
 }
 
 func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
+
 	var u domain.User
 
 	if err := c.BindJSON(&u); err != nil {
@@ -37,7 +38,6 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 	}
 
 	userResponse := controller.AuthService.GetUserByUsername(c.Request.Context(), u.Username)
-	fmt.Println(userResponse)
 
 	if userResponse.Password == "" || userResponse.Password != u.Password {
 		c.JSON(http.StatusUnauthorized, web.WebResponse{
@@ -58,7 +58,6 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 		return
 
 	}
-
 	c.SetCookie("token", tokenString, 3600, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, web.WebResponse{
 		Code: http.StatusOK,
@@ -71,12 +70,16 @@ func (controller *UserControllerImpl) ValidateUser(c *gin.Context) {
 }
 
 func (controller *UserControllerImpl) GetAllUser(c *gin.Context) {
-	token, err := c.Cookie("token")
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token not found"})
+	claims, exists := c.Get("claims")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No claims found"})
 		return
 	}
-	level, _ := helper.ParseJwt(token)
+
+	jwtClaims := claims.(jwt.MapClaims)
+
+	level := (jwtClaims)["level"]
+
 	var WebResponse web.WebResponse
 	switch level {
 	case "admin":

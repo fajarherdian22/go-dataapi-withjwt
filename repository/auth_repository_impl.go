@@ -66,10 +66,6 @@ func (repository *AuthRepositoryImpl) CreateUser(ctx context.Context, tx *sql.Tx
 	_, err := tx.ExecContext(ctx, fmt.Sprintf(Query, unique_id, payload.Username, payload.Password, payload.Email))
 	helper.IsError(err)
 
-	// id, err := rows.LastInsertId()
-	// helper.IsError(err)
-
-	// payload.Id = int(id)
 	return payload
 
 }
